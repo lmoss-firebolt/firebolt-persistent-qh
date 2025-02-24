@@ -37,7 +37,9 @@ As this feature is released as a beta version, users are requested to perform th
                 "s3:Get*",
                 "s3:List*"
             ],
-      "Resource": [ "arn:aws:s3:::<s3-bucket>/*/account_id=<firebolt-account-id>/*"
+      "Resource": [ 
+        "arn:aws:s3:::<s3-bucket>",
+        "arn:aws:s3:::<s3-bucket>/*/account_id=<firebolt-account-id>/*"
             ]
         }
     ]
