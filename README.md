@@ -15,14 +15,12 @@ We're releasing an alpha release of our persistence query history capability. Di
 ## Setup
 As this feature is released as a beta version, activation must be coordinated with Firebolt support.  
 
-### Step 1: Provide the Following Information to Firebolt
+#### Step 1: Provide Firebolt with the S3 desitination for query history data
 Please share the following details with Firebolt Support:
 
-1.  Firebolt Account Names
-    Provide all Firebolt account names from which you'd like to persist query history.
+1.  All Firebolt account names from which you'd like to persist query history.
 
-2.  S3 Bucket and Folder Path
-    Provide the S3 bucket name and folder path where persisted query history Parquet files will be stored.
+2.  S3 Bucket where persisted query history Parquet files will be stored.
     If persisting from multiple Firebolt accounts, you have two options:
 
         Option A:   Use separate S3 buckets for each account.
@@ -31,39 +29,39 @@ Please share the following details with Firebolt Support:
                     s3://<your-bucket>/persisted-query-history/account_id=<firebolt-account-id>/
                     Replace <your-bucket> and <firebolt-account-id> with your actual S3 bucket name and Firebolt account id(s). Firebolt can provide your account ids if not known.     
 
-Next, Firebolt will provide:
-1.  A Firebolt-owned AWS IAM role and AWS account. 
-    * **Pattern:** `arn:aws:iam::<Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>`
+#### Step 2: Configure your bucket policy to allow Firebolt access
+1.  Once we have the destination provided in Step 1, Firebolt will share a Firebolt-owned AWS IAM role for each account.
+    Example: `arn:aws:iam::<Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>`
 
-Enable Firebolt to write, list, and read objects in your specified S3 location, apply an IAM policy following this structure:
-```{
- "Version": "2012-10-17",
- "Statement": [
-   {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS":  [
-                "arn:aws:iam::<provided Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>"
+2. Apply an IAM policy following this structure, which will allow Firebolt to write, list, and read objects in your specified S3 location(s).
+    ```{
+    "Version": "2012-10-17",
+    "Statement": [
+    {
+        "Effect": "Allow",
+        "Principal": {
+            "AWS":  [
+                    "arn:aws:iam::<provided Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>"
+                    ]
+                },
+        "Action": [
+                    "s3:PutObject",
+                    "s3:DeleteObject",
+                    "s3:PutObjectAcl",
+                    "s3:Get*",
+                    "s3:List*"
+                ],
+        "Resource": [ 
+            "arn:aws:s3:::<s3-bucket>",
+            "arn:aws:s3:::<s3-bucket>/*/account_id=<firebolt-account-id>/*"
                 ]
-            },
-      "Action": [
-                "s3:PutObject",
-                "s3:DeleteObject",
-                "s3:PutObjectAcl",
-                "s3:Get*",
-                "s3:List*"
-            ],
-      "Resource": [ 
-        "arn:aws:s3:::<s3-bucket>",
-        "arn:aws:s3:::<s3-bucket>/*/account_id=<firebolt-account-id>/*"
-            ]
-        }
-    ]
-}
-```
-> Note: Make sure you replace `<firebolt-account-id>` and `<s3-bucket>` with your own firebolt account id(s) and s3 bucket.
+            }
+        ]
+    }
+    ```
+> Note: Be sure to replace `<firebolt-account-id>` and `<s3-bucket>` with your own firebolt account id(s) and s3 bucket.
 
-Upon receipt of this information, we will enable this capability on our end for the specified account.
+Upon receipt of this information, Firebolt will enable persistent query history exports for your account(s).
 
 ## Using Persistent Query History
 We recommend connecting Firebolt to the query history parquet files stored in S3. You will then be able to analyze your query history using SQL, or connect your preferred BI/reporting tools directly to your query history tables. 
