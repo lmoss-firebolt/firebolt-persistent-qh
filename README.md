@@ -23,11 +23,11 @@ Please share the following details with Firebolt Support:
 2.  S3 Bucket where persisted query history Parquet files will be stored.
     If persisting from multiple Firebolt accounts, you have two options:
 
-        Option A:   Use separate S3 buckets for each account.
+   **Option A:** Use separate S3 buckets for each account.
 
-        Option B:   Use one shared S3 bucket. Firebolt will store separate files for each account, organized using the following structure:
-                    s3://<your-bucket>/persisted-query-history/account_id=<firebolt-account-id>/
-                    Replace <your-bucket> and <firebolt-account-id> with your actual S3 bucket name and Firebolt account id(s). Firebolt can provide your account ids if not known.     
+   **Option B:** Use one shared S3 bucket. Firebolt will store separate files for each account, organized using the following structure:  
+   `s3://<your-bucket>/persisted-query-history/account_id=<firebolt-account-id>/`  
+   Replace `<your-bucket>` and `<firebolt-account-id>` with your actual S3 bucket name and Firebolt account ID(s). Firebolt can provide your account IDs if not known.    
 
 #### Step 2: Configure your bucket policy to allow Firebolt access
 1.  Once we have the destination provided in Step 1, Firebolt will share a Firebolt-owned AWS IAM role for each account.
