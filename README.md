@@ -15,19 +15,27 @@ We're releasing an alpha release of our persistence query history capability. Di
 ## Setup
 As this feature is released as a beta version, activation must be coordinated with Firebolt support.  
 
-First, please provide Firebolt:
-1.  The Firebolt account names from which you would like to persist query history
-2.  The S3 bucket and folder where you would like to store persisted query history parquet files.
-    If you are importing from multiple Firebolt accounts, these can either be transferred to separate buckets, or we will send separate files for each account, identifiable by title.
-3.  The interval at which you'd like to receive transfers. 
-    Please consult with Firebolt support to determine the best interval based on your requirements and workload.
+### Step 1: Provide the Following Information to Firebolt
+Please share the following details with Firebolt Support:
+
+1.  Firebolt Account Names
+    Provide all Firebolt account names from which you'd like to persist query history.
+
+2.  S3 Bucket and Folder Path
+    Provide the S3 bucket name and folder path where persisted query history Parquet files will be stored.
+    If persisting from multiple Firebolt accounts, you have two options:
+
+        Option A:   Use separate S3 buckets for each account.
+
+        Option B:   Use one shared S3 bucket. Firebolt will store separate files for each account, organized using the following structure:
+                    s3://<your-bucket>/persisted-query-history/account_id=<firebolt-account-id>/
+                    Replace <your-bucket> and <firebolt-account-id> with your actual S3 bucket name and Firebolt account id(s). Firebolt can provide your account ids if not known.     
 
 Next, Firebolt will provide:
 1.  A Firebolt-owned AWS IAM role and AWS account. 
-    * **Pattern:** `arn:aws:iam::<provided Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>`
-2.  Your Firebolt account id(s), if not known.
+    * **Pattern:** `arn:aws:iam::<Firebolt AWS account id>:role/FireboltData_<firebolt-account-id>`
 
-Finally, grant the the Firebolt AWS IAM role permissions to write, list, and read objects in the S3 resources you have provided using the following policy template:
+Enable Firebolt to write, list, and read objects in your specified S3 location, apply an IAM policy following this structure:
 ```{
  "Version": "2012-10-17",
  "Statement": [
@@ -53,8 +61,7 @@ Finally, grant the the Firebolt AWS IAM role permissions to write, list, and rea
     ]
 }
 ```
-
-> Note: Make sure you replace `<firebolt-account-id>` and `<s3-bucket>` with your own firebolt account id and s3 bucket.
+> Note: Make sure you replace `<firebolt-account-id>` and `<s3-bucket>` with your own firebolt account id(s) and s3 bucket.
 
 Upon receipt of this information, we will enable this capability on our end for the specified account.
 
